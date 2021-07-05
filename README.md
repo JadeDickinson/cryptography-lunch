@@ -6,7 +6,7 @@ openssl rand -base64 32
 
 # For practical purposes 32 is more than enough
 # As far as I can tell the upper limit for openssl number of bytes is 99999999999999999
-
+https://stackoverflow.com/questions/3638622/do-ruby-objects-have-a-size-limit
 # If you enter openssl rand -base64 999999999999999999 it fails with
 usage: rand [-base64 | -hex] [-out file] num
 
@@ -118,3 +118,32 @@ bob_box = RbNaCl::SimpleBox.from_keypair(
 bob_box.decrypt(Base64.urlsafe_decode64(ciphertext_base64))
 
 # we never share private keys with eachother, we only have public keys with eachother
+
+# Signing - next thing you can do is signing
+# you first create a signing key which is a private key
+you need to keys - x key to sign, and private key to verify
+you call sign which is a signature
+
+then you send the message, your signature and your verify (public) key
+anyone who knows these can authenticate that a document or message comes from somebody with the private key
+
+
+# message authentication code - equivalent of signing
+you use the same key to sign, and verify.
+
+if you use messsage authenitcation code you're effectively signing 
+message authentication a bit like hashing - lets you be sure the message of the file you're reading is one from you
+
+
+tun.loakthar:spiral_calendar_pad:  12:35
+# Create a random private key
+key = RbNaCl::Random.random_bytes(RbNaCl::SecretBox.key_bytes)
+# Create authentication object
+authentication = = RbNaCl::HMAC::SHA256.new(key)
+# Compute authenticator
+authenticator = authentication.update(message)
+# Verify
+authentication.verify_message(authenticator, message)
+
+general notes
+good real world example i've seen is journalists on twitter providing a key for securely contacting them https://jacob.hoffman-andrews.com/README/the-safe-way-to-put-a-pgp-key-in-your-twitter-bio/
